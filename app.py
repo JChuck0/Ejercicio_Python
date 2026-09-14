@@ -1,3 +1,5 @@
+import csv
+
 # Funciones
 def menu():
     tareas = []
@@ -7,7 +9,9 @@ def menu():
         print("1. Agregar tarea")
         print("2. Mostrar tareas")
         print("3. Eliminar tarea")
-        print("4. Salir")
+        print("4. Guardar Tareas")
+        print("5. Mostrar Tareas")
+        print("6. Salir")
 
         opcion = input("Elige una opción: ")
 
@@ -31,15 +35,21 @@ def menu():
                 print("Tarea eliminada.")
             else:
                 print("Esa posición no existe.")
-
         elif opcion == "4":
+            guardar_tareas(tareas, "todos.csv")
+            print("Tareas guardadas correctamente.")
+        elif opcion == "5":
+            tareas = cargar_tareas("todos.csv")
+            for indice, tarea in enumerate(tareas):
+                print(f"Tarea número {indice + 1}: {tarea['titulo']}")
+
+        elif opcion == "6":
             print("¡Hasta luego!")
             break
+        
 
         else:
             print("Opción no válida, intenta de nuevo.")
-
-menu()
 
 def crear_tarea(tareas, titulo):
     tarea = {'titulo': titulo}
@@ -61,3 +71,23 @@ def eliminar_tarea(tareas, posicion):
         return True
     else:
         return False
+
+def guardar_tareas(tareas, archivo):
+    with open(archivo, 'w', newline='') as f:
+        escritor = csv.DictWriter(f, fieldnames=['titulo'])
+        escritor.writeheader()
+        for tarea in tareas:
+            escritor.writerow(tarea)
+def cargar_tareas(archivo):
+    try:
+        with open(archivo, 'r') as f:
+            lectura = csv.DictReader(f)
+            tareas = []
+            for fila in lectura:
+                tareas.append(fila)
+            return tareas
+    except FileNotFoundError:
+        return []
+
+    
+menu()
